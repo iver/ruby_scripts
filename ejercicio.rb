@@ -1,31 +1,41 @@
 ### 1 ####
 class Product
-  attr_reader :name, :price
-  attr_accessor :quantity
-  
-  def initialize(name, price)
+  attr_reader :name, :price, :quantity
+
+  def initialize( name, price, quantity=0 )
     @name = name
     @price = price
+    @quantity = quantity
+  end
+
+  def update_quantity( quantity )
+    @quantity += quantity unless quantity.nil?
+  end
+end
+
+class ProductCollection < Array
+
+  def get_product( product )
+    finded = self.find { |item| item.name == product.name }
+    finded = Product.new( product.name, product.price, product.quantity ) if finded.nil?
+    return finded
   end
 end
 
 class Cart
   attr_accessor :items
-  
+
   def initialize
-    @items ||= Array.new
+    @items ||= ProductCollection.new
   end
 
-  def add(product, quantity = nil)
+  def add(product, quantity = 1)
     @items = [] unless @items
-    product.quantity = quantity.nil? ? 1 : quantity
-    unless @items.include?(product) 
-    	@items.to_a.push product
-    else
-    	@items.each do |item|
-    		item.quantity += product.quantity if item.name == product.name  
-    	end
-    end
+
+    new_product = @items.get_product product
+    new_product.update_quantity quantity unless new_product.nil?
+    @items.push new_product
+
   end
 
 end
