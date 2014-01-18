@@ -20,6 +20,14 @@ class ProductCollection < Array
     finded = Product.new( product.name, product.price, product.quantity ) if finded.nil?
     return finded
   end
+
+  def total
+    total = 0
+    self.each do |p|
+      total += (p.price * p.quantity)
+    end
+    return total
+  end
 end
 
 class Cart
@@ -35,9 +43,11 @@ class Cart
     new_product = @items.get_product product
     new_product.update_quantity quantity unless new_product.nil?
     @items.push new_product
-
   end
 
+  def price
+    return @items.total
+  end
 end
 
 # Inventario ##
@@ -69,7 +79,13 @@ cart.add(iPod, 2)
 
 # #### 3 ####
 # # Detalle de la compra ##
-
+puts "Detalle de la compra"
 cart.items.each do |item|
   puts "#{item.name} - #{item.quantity} - #{item.price} US$"
 end
+
+#### 4 ####
+# Calcular el total del carrito ##
+puts "Los productos de tu carrito valen: #{cart.price}"
+
+
