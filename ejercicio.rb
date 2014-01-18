@@ -1,26 +1,30 @@
 ### 1 ####
 class Product
-
-  def initialize(*args)
-    @name = args[0]
-    @price = args[1]
+  attr_reader :name, :price
+  attr_accessor :quantity
+  
+  def initialize(name, price)
+    @name = name
+    @price = price
   end
-  def name
-    return @name
-  end
-
 end
 
 class Cart
+  attr_accessor :items
+  
   def initialize
-    @products ||= Array.new
+    @items ||= Array.new
   end
 
-  def add(*args)
-    quantity = args[1].nil? ? 1 : args[1]
-
-    quantity.times do
-      @products.push args
+  def add(product, quantity = nil)
+    @items = [] unless @items
+    product.quantity = quantity.nil? ? 1 : quantity
+    unless @items.include?(product) 
+    	@items.to_a.push product
+    else
+    	@items.each do |item|
+    		item.quantity += product.quantity if item.name == product.name  
+    	end
     end
   end
 
@@ -50,5 +54,12 @@ cart.add(iPod, 2)
  second_cart.add(iPod)
  second_cart.add(iPhone,5)
 
-puts cart.inspect
-puts second_cart.inspect
+# puts cart.inspect
+# puts second_cart.inspect
+
+# #### 3 ####
+# # Detalle de la compra ##
+
+cart.items.each do |item|
+  puts "#{item.name} - #{item.quantity} - #{item.price} US$"
+end
