@@ -15,6 +15,11 @@ end
 
 class ProductCollection < Array
 
+  def get_by_name( product_name )
+    finded = self.select { |item| item.name == product_name }
+    return finded
+  end
+
   def get_product( product )
     finded = self.find { |item| item.name == product.name }
     finded = Product.new( product.name, product.price, product.quantity ) if finded.nil?
@@ -27,6 +32,15 @@ class ProductCollection < Array
       total += (p.price * p.quantity)
     end
     return total
+  end
+
+  def discount
+    discount = 0
+    ipods = self.get_by_name 'iPod'
+    ipods.each do |ipod|
+      discount += (ipod.quantity * ipod.price)
+    end
+    discount = discount / 2 unless discount == 0
   end
 end
 
@@ -45,8 +59,17 @@ class Cart
     @items.push new_product
   end
 
+  def discount
+    # 2 ipods x 1
+    @items.discount
+  end
+
   def price
     return @items.total
+  end
+
+  def total
+    return @items.total - @items.discount
   end
 end
 
@@ -87,5 +110,11 @@ end
 #### 4 ####
 # Calcular el total del carrito ##
 puts "Los productos de tu carrito valen: #{cart.price}"
+
+### 5 ####
+## Descuentos: iPods 2 x 1, iMac => (iPhone - 20%) ##
+puts "Tu compra aplica un descuento de: #{cart.discount}."
+puts "El total de tu compra es de #{cart.total}."
+
 
 
